@@ -16,25 +16,12 @@ GitHub の Issue と PR でつないで開発する流れを、このリポジ�
 | Docker（Windows は WSL 2 の Docker Engine・Mac は Colima など） | `docker compose version`（受講者に完成品を遊んでもらう・始める前の動作確認に使う） |
 | このリポジトリの clone | `gh repo clone Challenge-Consulting-Firm/ai-dev-handson-invaders` |
 
-**herdr の入れ方**（[公式の入れ方](https://herdr.dev/docs/install/)）
-
-```bash
-# Mac（どちらか）
-brew install herdr
-curl -fsSL https://herdr.dev/install.sh | sh
-```
-
-- Windows は、ルートの [README の「Windows の事前準備」](../../README.md#windows-の事前準備) の ④ で、WSL 2 の Ubuntu の中に入れる。
-- 新しい版にするときは `herdr update`（Homebrew で入れたときは `brew upgrade herdr`）。
+**入れ方はすべてルートの README にあります**: Mac は [「Mac の事前準備」](../../README.md#mac-の事前準備)、
+Windows は [「Windows の事前準備」](../../README.md#windows-の事前準備) の ① 〜 ④ をすべて行います。ここには入れ方を書きません。
 
 - 前日に一度 `docker compose up --build` で http://localhost:8080 が遊べること、
   `apps/invaders` で `npm ci`・`npm test`・`npm run dev`（http://localhost:5173）が通ることを確かめておく。
 - API キー（`.env`）は要らない。ゲームはブラウザの中だけで動き、外部のサービスを使わない。
-
-### Windows で行うとき
-
-Windows の準備（WSL 2 の入れ方・Docker Engine の入れ方・Ubuntu の中に入れる道具・詰まりやすい所）は、
-**ルートの [README の「Windows の事前準備」](../../README.md#windows-の事前準備) の ① 〜 ④ をすべて**行います。ここには書きません。
 
 ## 2. 画面の並べ方（herdr）
 
