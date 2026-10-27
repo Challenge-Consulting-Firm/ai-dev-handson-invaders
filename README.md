@@ -34,6 +34,21 @@ ai-dev-handson-invaders/
 > Docker Desktop は、従業員 250 人以上または年間売上 1,000 万ドル以上の会社での業務利用には有料のサブスクリプションが要ります。
 > Windows の手順は、このライセンスに当たらない Docker Engine（WSL 2 の Ubuntu に入れる）にそろえています。
 
+## Mac の事前準備
+
+ゲームを遊ぶだけなら、上の表の Docker（Docker Desktop か Colima）だけで「遊ぶ」に進めます。
+ハンズオンで開発の流れを動かす人は、加えて herdr を入れます（[公式の入れ方](https://herdr.dev/docs/install/)）。
+
+```bash
+# どちらか
+brew install herdr
+curl -fsSL https://herdr.dev/install.sh | sh
+```
+
+- 入ったかどうかは `herdr --version` で確かめる。
+- 新しい版にするときは `herdr update`（Homebrew で入れたときは `brew upgrade herdr`）。
+- ほかに使う道具（Claude Code・gh・git・Node.js 22 以上）と確かめ方は、[ハンズオンの手順の「事前に用意するもの」](docs/handson/README.md#1-事前に用意するもの)の表にあります。
+
 ## Windows の事前準備
 
 当日までに次を済ませておきます。**① 〜 ③ はゲームを遊ぶだけの人（受講者）も必要**、④ はハンズオンで開発の流れを動かす人だけ必要です。
