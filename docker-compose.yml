@@ -1,0 +1,17 @@
+# AI Invaders — コンテナ起動構成（Windows は WSL 2 の Docker Engine・Mac は Colima などで動く）
+#
+# 使い方:
+#   docker compose up --build
+#   → http://localhost:8080 を開く
+#
+# ポート 8080 が使われているときは、.env を作らずに次のように変えられる:
+#   INVADERS_PORT=8081 docker compose up --build
+
+services:
+  invaders:
+    build:
+      context: ./apps/invaders
+      dockerfile: Dockerfile
+    ports:
+      - "${INVADERS_PORT:-8080}:80"
+    restart: unless-stopped

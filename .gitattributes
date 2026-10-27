@@ -1,0 +1,5 @@
+# Windows で clone しても改行が CRLF に変わらないようにする
+# （シェルスクリプトや Dockerfile が CRLF になるとコンテナ内で動かなくなるため）
+* text=auto eol=lf
+*.png binary
+*.ico binary

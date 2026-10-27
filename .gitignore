@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# OS
+.DS_Store
+
+# ハンズオンでコントローラが書く割当文（コミットしない）
+.handson/
