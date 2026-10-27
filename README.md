@@ -108,16 +108,21 @@ nvm install 22
 
 # Claude Code
 curl -fsSL https://claude.ai/install.sh | bash
+
+# herdr（Linux 版を入れる。WSL 2 の Ubuntu は Linux として動く）
+curl -fsSL https://herdr.dev/install.sh | sh
 ```
 
 - **GitHub CLI（gh）**: [公式の Linux 向けの手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)（Debian / Ubuntu の項）で入れ、`gh auth login` でログインする。
-- **herdr**: [herdr.dev](https://herdr.dev/) の手順で入れる。WSL 2 で動くかは、前日の通し稽古で必ず確かめる。
+- **herdr**: 上のコマンドで入る（[公式の入れ方](https://herdr.dev/docs/install/)）。`~/.local/bin` に入るため、`herdr` が見つからないときは Ubuntu を開き直す（それでも見つからないときは `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc` を実行して開き直す）。
+  herdr には Windows 版（ベータ）もあるが、このハンズオンは `tools/assign.sh` などが bash 前提のため、**WSL 2 の中の Linux 版**を使う。
+  公式の資料は WSL 2 の中での利用を明記していないため、前日の通し稽古で `herdr` の起動とペインの分割まで必ず確かめる。
 - 当日は herdr の 3 つのペイン（コントローラ・エージェント 2 つ）を、すべてこの Ubuntu の中で起動する。
 
 入ったかどうかは次で確かめます。
 
 ```bash
-git --version && node --version && gh auth status && claude --version && docker compose version
+git --version && node --version && gh auth status && claude --version && herdr --version && docker compose version
 ```
 
 ### Windows で詰まりやすい所
