@@ -265,17 +265,22 @@ git remote -v
 herdr は、ターミナルの画面（ペイン）の単位でエージェントを並べ、名前を付けて互いに文を送れるようにします。
 そのため、**種類の違うエージェントを 1 つのハーネスにまとめられる**のが利点です。
 
-```text
- 1 つのツールの中で組むハーネス           herdr で組むハーネス
-┌──────────────────────────┐        ┌───────────┬───────────────┐
-│ Claude Code              │        │ controller│ agent-a       │
-│  ├─ サブエージェント 1    │        │ Claude    │ Claude Code   │
-│  └─ サブエージェント 2    │        │ Code      ├───────────────┤
-│ （すべて同じツール）      │        │           │ agent-b       │
-└──────────────────────────┘        │           │ Codex など    │
-                                    └───────────┴───────────────┘
-                                     （ツールの種類を混ぜられる）
+```mermaid
+flowchart LR
+    subgraph ONE["1 つのツールの中で組むハーネス"]
+        direction TB
+        M["Claude Code"] --> S1["サブエージェント 1<br/>（Claude）"]
+        M --> S2["サブエージェント 2<br/>（Claude）"]
+    end
+    subgraph HERDR["herdr で組むハーネス"]
+        direction TB
+        CT["controller<br/>（Claude Code）"] -- "herdr agent prompt" --> A["agent-a<br/>（Claude Code）"]
+        CT -- "herdr agent prompt" --> B["agent-b<br/>（Codex など）"]
+    end
+    ONE ~~~ HERDR
 ```
+
+左は、すべて同じツールのエージェントです。右は、ペインごとに**ツールの種類を混ぜられます**。
 
 - **得意なものを組み合わせられる**: たとえば、コントローラと画面の変更は Claude Code、ルールとテストの変更は Codex、のように役割ごとに選べます。
 - **やり取りの形は同じ**: どのエージェントにも、`herdr agent prompt` で割当文を送り、`herdr agent read` で画面を読み、`herdr agent list` で状態（入力待ち・作業中・確認待ち）を見る、という同じ操作で指示と確認ができます。
