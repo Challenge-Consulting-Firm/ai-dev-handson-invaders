@@ -109,32 +109,35 @@ nothing to commit, working tree clean
 
 ```mermaid
 flowchart LR
-    U["元のリポジトリ<br/>Challenge-Consulting-Firm/ai-dev-handson-invaders<br/>（教材・読むだけ）"]
-    F["自分の fork<br/>&lt;自分&gt;/ai-dev-handson-invaders<br/>（Issue・PR・CI・マージはここ）"]
+    U["元のリポジトリ<br/>（教材・読むだけ）"]
+    F["自分の fork<br/>（Issue・PR・CI・<br/>マージはここ）"]
     subgraph PC["自分の PC"]
-        C["clone したフォルダー<br/>ai-dev-handson-invaders<br/>（コントローラが動く）"]
-        W["エージェントの worktree<br/>../ai-dev-handson-invaders-wt/…"]
+        C["clone した<br/>フォルダー<br/>（コントローラ）"]
+        W["worktree<br/>（エージェント）"]
     end
-    U -- "① fork（GitHub 上で複製）" --> F
-    F -- "② clone（手元に複製）" --> C
-    C -- "worktree を作る" --> W
-    W -- "push（origin）" --> F
-    U -. "最新の教材を取り込むとき<br/>Sync fork" .-> F
+    U -- "① fork" --> F
+    F -- "② clone" --> C
+    C -- "作る" --> W
+    W -- "push" --> F
+    U -. "Sync fork<br/>（教材の更新を<br/>取り込むとき）" .-> F
 ```
+
+| 図の箱 | 場所 | 何をする所か |
+|---|---|---|
+| 元のリポジトリ | `Challenge-Consulting-Firm/ai-dev-handson-invaders` | 教材。受講者は読むだけで、何も送らない |
+| 自分の fork | `<自分>/ai-dev-handson-invaders` | 自分専用の複製。Issue・PR・CI・マージはすべてここで行う |
+| clone したフォルダー | 手元の `ai-dev-handson-invaders` | herdr とコントローラを起動する場所 |
+| worktree | 手元の `../ai-dev-handson-invaders-wt/…` | エージェントが作業する専用のフォルダー。ここから自分の fork へ push する |
 
 - `gh repo fork --clone` を使うと、①（fork）と ②（clone）が 1 回で済みます。
 - 手元のフォルダーでは、**`origin` が自分の fork**、**`upstream` が元のリポジトリ**を指します。エージェントは `origin`（自分の fork）にだけ push します。
-- 元のリポジトリには何も送りません（点線の「最新の教材を取り込む」向きだけ）。
+- 元のリポジトリには何も送りません（点線の「教材の更新を取り込む」向きだけ）。
 
 #### 準備の流れ
 
 ```mermaid
-flowchart TD
-    A["① fork して clone する<br/>gh repo fork … --clone"] --> B["② フォルダーに入る<br/>cd ai-dev-handson-invaders"]
-    B --> C["③ gh の向き先を自分の fork にする<br/>gh repo set-default &lt;自分&gt;/ai-dev-handson-invaders"]
-    C --> D["④ fork の Issue を有効にする<br/>gh repo edit --enable-issues"]
-    D --> E["⑤ fork の Actions（CI）を有効にする<br/>GitHub の fork の画面 → Actions タブ"]
-    E --> G["手順 3 〜 12 を、すべて自分の fork に対して行う<br/>（マージも自分で行う）"]
+flowchart LR
+    A["① fork して<br/>clone する"] --> B["② フォルダーに<br/>入る"] --> C["③ gh の向き先を<br/>自分の fork にする"] --> D["④ Issue を<br/>有効にする"] --> E["⑤ Actions（CI）を<br/>有効にする"] --> G["手順 3〜12 を<br/>自分の fork で行う"]
 ```
 
 #### 手順
