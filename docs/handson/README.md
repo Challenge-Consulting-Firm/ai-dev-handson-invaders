@@ -183,7 +183,7 @@ git remote -v
    herdr
    ```
 
-2. herdr の画面を、次の形の 3 つのペインに分けます（コマンドで分けるときの書き方は `herdr pane split --help` で確かめる）。
+2. herdr の画面を、次の形の 3 つのペインに分けます。起動した直後は、画面全体が 1 つのペイン（これが左のペインになる）です。
 
    ```text
    ┌──────────────────────┬──────────────────────┐
@@ -195,38 +195,64 @@ git remote -v
    └──────────────────────┴──────────────────────┘
    ```
 
-3. **左のペイン**で、ペインの一覧を出し、右の 2 つの ID を確かめます。
+   herdr の中のペイン（左のペイン）で、次を 1 行ずつ打ちます。
 
    ```bash
+   # (1) 今のペインを左右に分ける（右側に新しいペインができる。入力は左のペインのまま）
+   herdr pane split --current --direction right --cwd "$PWD" --no-focus
+   ```
+
+   1 行の長い文字列（JSON）が出ます。その中の **`"pane_id":"…"`** が、新しくできた**右のペインの ID** です。
+
+   ```text
+   {"id":"cli:pane:split","result":{"pane":{ … ,"pane_id":"w1:p2", … }}}
+                                                ^^^^^^^^^^^^^^^^^ この w1:p2 が右のペインの ID
+   ```
+
+   ```bash
+   # (2) 右のペインを上下に分ける（<右のペイン ID> は (1) の pane_id。例: w1:p2）
+   herdr pane split --pane <右のペイン ID> --direction down --cwd "$PWD" --no-focus
+   ```
+
+   もう一度 JSON が出ます。今度の `"pane_id"` が**右下のペインの ID** です。(1) の ID は、そのまま**右上のペインの ID** として使います。
+
+   ```bash
+   # (3) 3 つになったことを確かめる（3 つの pane_id が出ればよい）
    herdr pane list
    ```
 
-4. 同じく左のペインで、右上と右下に Claude Code を起動し、名前を付けます。
+3. 同じく左のペインで、右上と右下に Claude Code を起動し、名前を付けます。
 
    ```bash
-   herdr agent start agent-a --kind claude --pane <右上のペイン ID>
-   herdr agent start agent-b --kind claude --pane <右下のペイン ID>
+   herdr agent start agent-a --kind claude --pane <右上のペイン ID>   # 例: w1:p2
+   herdr agent start agent-b --kind claude --pane <右下のペイン ID>   # 例: w1:p3
    ```
 
-5. 最後に、左のペイン自身で Claude Code を起動します。これがコントローラになります。
+   それぞれ、右のペインで Claude Code が起動し、入力を待つ状態になると戻ってきます（最大 30 秒ほど）。
+
+4. 最後に、左のペイン自身で Claude Code を起動します。これがコントローラになります。
 
    ```bash
    claude
    ```
 
-6. コントローラの入力欄で、先頭に `!` を付けて次を打ち、左のペインに `controller` という名前を付けます（`!` を付けると、Claude Code の中からそのままコマンドを実行できる）。
+5. コントローラの入力欄で、先頭に `!` を付けて次を打ち、左のペインに `controller` という名前を付けます（`!` を付けると、Claude Code の中からそのままコマンドを実行できる）。
 
    ```text
-   ! herdr agent rename <左のペイン ID> controller
+   ! herdr agent rename "$HERDR_PANE_ID" controller
    ! herdr agent list
    ```
 
+   `$HERDR_PANE_ID` には、herdr が「今いるペインの ID」を自動で入れてくれるので、ID を書き写す必要はありません。
    `herdr agent list` に `controller`・`agent-a`・`agent-b` の 3 つが出れば準備完了です。
 
 ### 解説
 
 - **herdr** は、1 つのターミナルの中に複数の画面（ペイン）を並べ、その中で動く AI のセッションに**名前を付けて、互いに文を送れるようにする**道具です。コントローラは `agent-a` という名前を使ってエージェントに割当文を送り、エージェントは `controller` という名前で完了を報告します。
-- `herdr agent start` は、相手のペインがシェルの入力待ちのときだけ使えます。自分自身のペインには使えないため、コントローラだけは手順 5 で直接 `claude` を起動し、手順 6 で名前を付けています。
+- **ペインを分けるコマンドの意味**: `--current` は「今いるペインを分ける」、`--pane <ID>` は「その ID のペインを分ける」、`--direction right`／`down` は分ける向き（右に足す／下に足す）です。
+  `--cwd "$PWD"` は、新しいペインを今と同じフォルダー（clone したフォルダー）で開くため、`--no-focus` は、入力を左のペインに残したまま続けて打てるようにするためです。
+- **ペイン ID**（`w1:p2` など）は、herdr が付ける各ペインの番号です。コマンドの結果から読み取って使います。人によって数字が違うので、例の値をそのまま打たないでください。
+- `herdr agent start` は、相手のペインがシェルの入力待ちのときだけ使えます。自分自身のペインには使えないため、コントローラだけはこの手順の 4 で直接 `claude` を起動し、5 で名前を付けています。
 - 3 つとも同じフォルダー（clone したフォルダー）で起動します。エージェントは、割り当てを受けてから自分専用のフォルダーを作り、そちらへ移って作業します。
 - Claude Code は起動すると、このリポジトリの `CLAUDE.md` と `AGENTS.md` を自動で読みます。役割・開発の流れ・してはいけないこと（マージをしない・`.env` を読まないなど）は、そこに書いてあります。
 
