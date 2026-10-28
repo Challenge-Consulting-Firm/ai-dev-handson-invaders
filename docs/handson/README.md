@@ -290,7 +290,7 @@ herdr agent start agent-b --kind codex --pane <右下のペイン ID>
 > **混ぜるときの注意**: このリポジトリの決まりは、Claude Code 以外のエージェントも読めるように `AGENTS.md` に書いてあります（Claude Code は `CLAUDE.md` から読み込む）。
 > 一方、確認なしで動かすコマンドの許可（`.claude/settings.json`）は Claude Code だけの設定です。ほかのエージェントでは、そのエージェント自身の設定で権限を決めてください。
 > また、手順 8 のレビューは `claude -p` を使うので、どのエージェントを使う場合でも Claude Code は入れておきます。
-> 割当文を送る `tools/assign.sh` は、送る前に Claude Code のコマンド（`/clear`・`/compact`）を相手に送ります。Claude Code 以外のエージェントに送るときは、3 つ目の引数を `none` にし（`bash tools/assign.sh agent-b none <割当文のファイル>`）、前の会話の消し方はそのエージェントのやり方で行います。
+> 割当文を送る `tools/assign.sh` は、送る前に Claude Code のコマンド（`/clear`・`/compact`）を相手に送ります。Claude Code 以外のエージェントに送るときは、2 つ目の引数を `none` にし（`bash tools/assign.sh agent-b none <割当文のファイル>`）、前の会話の消し方はそのエージェントのやり方で行います。
 > このハンズオンの手順は Claude Code 3 つで確かめる前提で書いています。混ぜる場合は、前日の通し稽古で同じ組み合わせを試してください。
 
 ---
