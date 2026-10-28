@@ -251,6 +251,6 @@ npm run dev          # http://localhost:5173
 - 当日の手順（herdr の画面の並べ方・流れ・コマンド）: [docs/handson/README.md](docs/handson/README.md)
 - コントローラ役の起動文: [docs/handson/controller-prompt.md](docs/handson/controller-prompt.md)
 - 割当文の型と例: [docs/handson/assign-examples.md](docs/handson/assign-examples.md)
-- サンプルの Issue の下書き: [docs/handson/sample-issues/](docs/handson/sample-issues/)
+- サンプルの Issue 2 件の説明と、コントローラに作成を依頼する文: [docs/handson/README.md の手順 5・6](docs/handson/README.md#5-サンプルの-issue2-件を知る)
 - Issue と PR のひな形: [.github/ISSUE_TEMPLATE/change.md](.github/ISSUE_TEMPLATE/change.md)・[.github/pull_request_template.md](.github/pull_request_template.md)
 - 自動チェック（PR ごとに型検査・テスト・ビルド・コンテナのビルド）: [.github/workflows/ci.yml](.github/workflows/ci.yml)
