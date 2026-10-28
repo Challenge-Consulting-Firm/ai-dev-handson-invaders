@@ -93,16 +93,83 @@ nothing to commit, working tree clean
 - エージェントは、このフォルダーの**隣**に自分専用のフォルダー（`../ai-dev-handson-invaders-wt/…`）を作って作業します。そのため、clone する場所の 1 つ上のフォルダー（例ではホーム）にも書き込めるようにしておきます。
 - Windows では、clone を **WSL 2 のホーム（`~/`）** に置きます。Windows 側（`/mnt/c/...`）に置くと、読み書きが遅く、改行の扱いも混ざりやすくなります。
 
-> **受講者が自分の手で同じ流れを行うとき**: このリポジトリに書き込む権限が無いため、自分のアカウントに複製（fork）して行います。
->
-> ```bash
-> gh repo fork Challenge-Consulting-Firm/ai-dev-handson-invaders --clone
-> cd ai-dev-handson-invaders
-> gh repo set-default <自分の GitHub ユーザー名>/ai-dev-handson-invaders   # gh の Issue・PR を自分の fork に向ける
-> gh repo edit --enable-issues                                          # fork では Issue が最初は無効になっている
-> ```
->
-> fork した直後は自動チェック（CI）も止まっているため、GitHub の fork の画面の **Actions** タブを開き、有効にするボタンを押します。
+### 受講者が自分で行うとき（fork）
+
+上の手順は、このリポジトリに**書き込む権限がある人**（進行役）向けです。受講者が自分の手で同じ流れを体験するときは、
+**fork（フォーク）** で自分のアカウントにリポジトリの複製を作り、その複製で行います。
+
+#### fork の目的
+
+- **書き込む権限が無くても、すべての操作を自分で体験できる**: このリポジトリは公開されていますが、受講者は Issue の作成・push・PR・マージができません。
+  自分の fork なら、自分が持ち主なので、手順 3 〜 12 をすべて自分で行えます。
+- **元のリポジトリを汚さない**: 受講者の Issue・ブランチ・PR は、すべて自分の fork の中にできます。教材（元のリポジトリ）は変わりません。
+- **受講者どうしがぶつからない**: 全員が同じリポジトリで同じ Issue を作ると、番号もブランチ名も重なります。fork なら一人ひとりが別の場所で行えます。
+
+#### 元のリポジトリ・fork・手元の関係
+
+```mermaid
+flowchart LR
+    U["元のリポジトリ<br/>（教材・読むだけ）"]
+    F["自分の fork<br/>（Issue・PR・CI・<br/>マージはここ）"]
+    subgraph PC["自分の PC"]
+        C["clone した<br/>フォルダー<br/>（コントローラ）"]
+        W["worktree<br/>（エージェント）"]
+    end
+    U -- "① fork" --> F
+    F -- "② clone" --> C
+    C -- "作る" --> W
+    W -- "push" --> F
+    U -. "Sync fork<br/>（教材の更新を<br/>取り込むとき）" .-> F
+```
+
+| 図の箱 | 場所 | 何をする所か |
+|---|---|---|
+| 元のリポジトリ | `Challenge-Consulting-Firm/ai-dev-handson-invaders` | 教材。受講者は読むだけで、何も送らない |
+| 自分の fork | `<自分>/ai-dev-handson-invaders` | 自分専用の複製。Issue・PR・CI・マージはすべてここで行う |
+| clone したフォルダー | 手元の `ai-dev-handson-invaders` | herdr とコントローラを起動する場所 |
+| worktree | 手元の `../ai-dev-handson-invaders-wt/…` | エージェントが作業する専用のフォルダー。ここから自分の fork へ push する |
+
+- `gh repo fork --clone` を使うと、①（fork）と ②（clone）が 1 回で済みます。
+- 手元のフォルダーでは、**`origin` が自分の fork**、**`upstream` が元のリポジトリ**を指します。エージェントは `origin`（自分の fork）にだけ push します。
+- 元のリポジトリには何も送りません（点線の「教材の更新を取り込む」向きだけ）。
+
+#### 準備の流れ
+
+```mermaid
+flowchart LR
+    A["① fork して<br/>clone する"] --> B["② フォルダーに<br/>入る"] --> C["③ gh の向き先を<br/>自分の fork にする"] --> D["④ Issue を<br/>有効にする"] --> E["⑤ Actions（CI）を<br/>有効にする"] --> G["手順 3〜12 を<br/>自分の fork で行う"]
+```
+
+#### 手順
+
+```bash
+# ① 自分のアカウントに fork し、そのまま手元に clone する
+gh repo fork Challenge-Consulting-Firm/ai-dev-handson-invaders --clone
+
+# ② できたフォルダーに入る
+cd ai-dev-handson-invaders
+
+# ③ gh の Issue・PR の向き先を、自分の fork にする
+gh repo set-default <自分の GitHub ユーザー名>/ai-dev-handson-invaders
+
+# ④ fork では Issue が最初は無効になっているので、有効にする
+gh repo edit --enable-issues
+
+# 確かめる: origin が自分の fork、upstream が元のリポジトリになっていればよい
+git remote -v
+```
+
+⑤ fork した直後は自動チェック（CI）も止まっています。ブラウザで `https://github.com/<自分の GitHub ユーザー名>/ai-dev-handson-invaders/actions` を開き、
+ワークフローを有効にするボタンを押します。
+
+#### 解説
+
+- **③ が大事**: fork の中で `gh issue create` や `gh pr create` を打つと、設定によっては**元のリポジトリ**に Issue や PR を作ろうとします。
+  `gh repo set-default` で向き先を自分の fork に固定しておくと、コントローラとエージェントの `gh` のコマンドがすべて自分の fork に向きます。
+- **PR の向き**: エージェントが作る PR は、「自分の fork の作業用ブランチ → 自分の fork の `main`」です。元のリポジトリへの PR は作りません。
+  手順 9 で PR を開いたとき、画面の上に `<自分>/ai-dev-handson-invaders:main ← …` と出ていれば正しい向きです。
+- **マージも自分で**: 手順 10 のマージは、fork の持ち主である自分が行います（`gh pr merge` も自分の fork に向く）。
+- **教材が更新されたとき**: 元のリポジトリの新しい内容を取り込みたいときは、fork の画面の「Sync fork」を押すか、`gh repo sync <自分>/ai-dev-handson-invaders` を実行してから、手元で `git pull` します。
 
 ---
 
@@ -475,4 +542,4 @@ docker compose up --build
 ## もう一度行うとき
 
 - 前回のハンズオンで作った Issue と PR は GitHub に残ります。同じ 2 件をもう一度行うときは、main を元に戻す PR を作ってから行うか、
-  受講者ごとに fork（手順 2 の囲み）して、それぞれの fork で行います。
+  受講者ごとに fork（手順 2 の「受講者が自分で行うとき（fork）」）して、それぞれの fork で行います。
