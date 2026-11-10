@@ -193,6 +193,28 @@ GitHub CLI（gh）は、公式のパッケージ置き場を登録して入れ�
 git --version && node --version && gh auth status && claude --version && herdr --version && docker compose version
 ```
 
+参考: Windows 11 の WSL 2（Ubuntu 24.04）で準備を終えたときの結果です（ユーザー名・PC 名は置き換えています）。
+すべての行が出て、途中でエラーで止まらなければ準備はできています。版の数字は、入れた時期によって変わります。
+
+```text
+taro@PC-NAME:~$ git --version && node --version && gh auth status && claude --version && herdr --version && docker compose version
+git version 2.43.0
+v22.23.4
+github.com
+  ✓ Logged in to github.com account <GitHub のユーザー名> (/home/taro/.config/gh/hosts.yml)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: gho_************************************
+  - Token scopes: 'gist', 'read:org', 'repo', 'workflow'
+2.1.322 (Claude Code)
+herdr 0.9.5
+Docker Compose version v5.7.0
+```
+
+- `gh auth status` は `✓ Logged in to github.com` と `Git operations protocol: https` が出ればよい（「[GitHub にログインする](#github-にログインする)」で HTTPS を選んだ結果）。
+- `Token:` は伏せ字で表示される。伏せ字でない値が出ることがあっても、画面の写しや Issue・PR に貼らない。
+- 途中のコマンドが見つからない（`command not found`）ときは、そこで止まる。その道具を ④ の手順で入れ直し、Ubuntu を開き直してから、もう一度実行する。
+
 ### Windows で詰まりやすい所
 
 | 症状 | 確かめること・直し方 |
