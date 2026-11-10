@@ -89,7 +89,9 @@ taro@PC-NAME:~$            ← Ubuntu（ここにコマンドを打つ）
 ```
 
 - 初めて開いたときに「ユーザー名とパスワードを決める」画面が出たら、① の最後と同じように決める。
-  パスワードは `sudo` のたびに聞かれる。打っても画面に何も出ないが、そのまま打って Enter を押せばよい。
+  `sudo` で聞かれるのは、**このとき決めた Ubuntu のパスワード**（Windows のサインインのパスワードとは別）。
+  打っても画面に何も出ないが、そのまま打って Enter を押せばよい。一度通ると、しばらく（標準で 15 分）は聞かれない。
+  忘れたときの直し方は、下の「[Windows で詰まりやすい所](#windows-で詰まりやすい所)」にある。
 - `$` の前が `~` 以外（例: `/mnt/c/Users/taro`）のときは、Windows 側のフォルダーにいる。まず `cd ~` でホームに移る。
 - スタートメニューに「Ubuntu」が無いときは、PowerShell で `wsl -l -v` を実行して、Ubuntu が入っているかを確かめる。
   一覧に無ければ `wsl --install -d Ubuntu` で入れる。
@@ -168,6 +170,7 @@ git --version && node --version && gh auth status && claude --version && herdr -
 
 | 症状 | 確かめること・直し方 |
 |---|---|
+| `sudo` のパスワードを忘れた・通らない | PowerShell で `wsl -u root` を実行して root で入り、`passwd <Ubuntu のユーザー名>` で新しいパスワードを 2 回打ってから `exit` する。ユーザー名は、Ubuntu の行の頭（`taro@PC-NAME:~$` の `taro`）で確かめる |
 | `permission denied ... docker.sock` | ② の `usermod` の後に、PowerShell で `wsl --shutdown` → Ubuntu を開き直したか |
 | `Cannot connect to the Docker daemon` | `sudo systemctl status docker` で動いているか。`ps -p 1 -o comm=` が `systemd` でないときは、`/etc/wsl.conf` に `[boot]` と `systemd=true` の 2 行を書き、`wsl --shutdown` してから開き直す |
 | `docker compose up` で「ポートが使えない」 | Windows が予約しているポートと重なっていることがある。PowerShell で `netsh interface ipv4 show excludedportrange protocol=tcp` を見て、範囲の外のポートを `INVADERS_PORT` で指定する（下の「遊ぶ」を参照） |
