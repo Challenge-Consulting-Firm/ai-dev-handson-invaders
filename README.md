@@ -47,6 +47,15 @@ curl -fsSL https://herdr.dev/install.sh | sh
 
 - 入ったかどうかは `herdr --version` で確かめる。
 - 新しい版にするときは `herdr update`（Homebrew で入れたときは `brew upgrade herdr`）。
+
+GitHub CLI（gh）も入れて、GitHub にログインします（[公式の macOS 向けの手順](https://github.com/cli/cli#macos)）。
+
+```bash
+brew install gh
+```
+
+- 入ったら、下の「[GitHub にログインする](#github-にログインする)」の手順で GitHub にログインする。
+- 新しい版にするときは `brew upgrade gh`。
 - ほかに使う道具（Claude Code・gh・git・Node.js 22 以上）と確かめ方は、[ハンズオンの手順の「事前に用意するもの」](docs/handson/README.md#1-事前に用意するもの)の表にあります。
 
 ## Windows の事前準備
@@ -154,7 +163,25 @@ curl -fsSL https://claude.ai/install.sh | bash
 curl -fsSL https://herdr.dev/install.sh | sh
 ```
 
-- **GitHub CLI（gh）**: [公式の Linux 向けの手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)（Debian / Ubuntu の項）で入れ、`gh auth login` でログインする。
+GitHub CLI（gh）は、公式のパッケージ置き場を登録して入れます（[公式の Linux 向けの手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)の Debian の項と同じ。Ubuntu も対象）。
+
+```bash
+# GitHub CLI（gh）
+(type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
+	&& sudo mkdir -p -m 755 /etc/apt/keyrings \
+	&& out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+	&& cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+	&& sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+	&& sudo mkdir -p -m 755 /etc/apt/sources.list.d \
+	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+	&& sudo apt update \
+	&& sudo apt install gh -y
+
+```
+
+入ったら、下の「[GitHub にログインする](#github-にログインする)」の手順で GitHub にログインします。
+
+- **GitHub CLI（gh）**: 新しい版にするときは `sudo apt update && sudo apt install gh`。
 - **herdr**: 上のコマンドで入る（[公式の入れ方](https://herdr.dev/docs/install/)）。`~/.local/bin` に入るため、`herdr` が見つからないときは Ubuntu を開き直す（それでも見つからないときは `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc` を実行して開き直す）。
   herdr には Windows 版（ベータ）もあるが、このハンズオンは `tools/assign.sh` などが bash 前提のため、**WSL 2 の中の Linux 版**を使う。
   公式の資料は WSL 2 の中での利用を明記していないため、前日の通し稽古で `herdr` の起動とペインの分割まで必ず確かめる。
@@ -176,6 +203,52 @@ git --version && node --version && gh auth status && claude --version && herdr -
 | `docker compose up` で「ポートが使えない」 | Windows が予約しているポートと重なっていることがある。PowerShell で `netsh interface ipv4 show excludedportrange protocol=tcp` を見て、範囲の外のポートを `INVADERS_PORT` で指定する（下の「遊ぶ」を参照） |
 | Windows のブラウザで http://localhost:8080 が開かない | 社内のプロキシの設定で `localhost` が除外されているか。`http://127.0.0.1:8080` も試す。それでも開かないときは、Ubuntu で `hostname -I` を実行し、出た IP アドレスの `:8080` を開く |
 | clone やビルドが遅い・改行がおかしい | clone を Windows 側（`/mnt/c/...`）に置いていないか。**WSL 2 のホーム（`~/`）に clone する** |
+
+## GitHub にログインする
+
+ハンズオンで開発の流れを動かす人は、gh を入れた後に、ターミナルから GitHub にログインします（Mac・Windows 共通。Windows は **Ubuntu の画面**で行う）。
+GitHub のアカウントが無い人は、先に https://github.com/signup で作っておきます。
+
+**1. ログインを始める**
+
+```bash
+gh auth login
+```
+
+**2. 質問に答える**（矢印キーで選んで Enter）
+
+| 聞かれること | 選ぶもの |
+|---|---|
+| `Where do you use GitHub?` | `GitHub.com` |
+| `What is your preferred protocol for Git operations on this host?` | `HTTPS` |
+| `Authenticate Git with your GitHub credentials?` | `Yes`（`git clone`・`git push` も gh のログインで通るようになる） |
+| `How would you like to authenticate GitHub CLI?` | `Login with a web browser` |
+
+**3. 表示されたコードをブラウザで入れる**
+
+次のように、8 桁のコード（例 `ABCD-1234`）が表示されます。コードを控えてから Enter を押します。
+
+```text
+! First copy your one-time code: ABCD-1234
+Press Enter to open https://github.com/login/device in your browser...
+```
+
+ブラウザで https://github.com/login/device が開くので、GitHub にサインインして、コードを入れて **Continue** →
+**Authorize github** を押します。
+
+- Windows（WSL 2）では、ブラウザが自動で開かないことがある。そのときは、Windows のふだんのブラウザで https://github.com/login/device を自分で開く。
+- コードには有効期限（15 分）がある。切れたら `gh auth login` からやり直す。
+
+**4. ログインできたか確かめる**
+
+ターミナルに `✓ Logged in as <GitHub のユーザー名>` と出れば完了です。あとからは次で確かめられます。
+
+```bash
+gh auth status   # 「Logged in to github.com account <ユーザー名>」と出ればよい
+```
+
+- このリポジトリに書き込む（Issue・PR を作る）には、リポジトリへの書き込み権限が要る。権限が無いときは、講師に GitHub のユーザー名を伝えて招待してもらうか、[ハンズオンの手順の「受講者が自分で行うとき（fork）」](docs/handson/README.md#受講者が自分で行うときfork)で進める。
+- 別のアカウントでログインし直すときは、`gh auth logout` してから `gh auth login` をやり直す。
 
 ## 遊ぶ
 
